@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Shortener</title>
+    </head>
+    <body>
+        <h1>Shortener</h1>
+        <p>Using storage type: {{storage_type}}</p>
+        <h2>From web client use the following calls</h2>
+        <ul>
+            <li><a href="{{base_url}}store/?url=https://www.yahoo.com" target="_blank">{{base_url}}store/?url=https://www.yahoo.com</a> -> to input information (will return the id)</li>
+            <li><a href="{{base_url}}redirect/?id=a" target="_blank">{{base_url}}redirect/?id=a</a> -> to redirect to specific id "a"</li>
+            <li><a href="{{base_url}}statistics" target="_blank">{{base_url}}statistics</a> -> to get the statistics</li>
+            <li><a href="{{base_url}}title/?id=a" target="_blank">{{base_url}}title/?id=a</a> -> to get the url title for id "a"</li>
+        </ul>
+    </body>
+</html>
