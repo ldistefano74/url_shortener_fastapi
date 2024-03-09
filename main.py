@@ -1,18 +1,33 @@
-from typing import Union
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from starlette import status
-from fastapi.responses import RedirectResponse
+from fastapi.responses import RedirectResponse, HTMLResponse, FileResponse
+from fastapi.templating import Jinja2Templates
+from url_storage import InMemoryStorage, DBStorage
+from pydantic_settings import BaseSettings
 
-from url_storage import Storage
 
+class Settings(BaseSettings):
+    storage_class: str = "IM"
+
+
+settings = Settings()
 app = FastAPI()
-URL_STORAGE = Storage()
+
+if settings.storage_class == "IM":
+    URL_STORAGE = InMemoryStorage()
+else:
+    URL_STORAGE = DBStorage()
+
+templates = Jinja2Templates(directory=".")
 
 
 @app.get("/")
-def read_root():
-    return {"Hello": "World"}
+def read_root(request: Request):
+    base_url = str(request.base_url)
 
+    return templates.TemplateResponse("home.html", {"request": request,
+                                                    "storage_type": settings.storage_class,
+                                                    "base_url": base_url})
 
 @app.post("/store/")
 def store_url(url: str):
@@ -36,8 +51,8 @@ def redirect_url(id):
     return RedirectResponse(url=target_url, status_code=status.HTTP_302_FOUND)
 
 
-@app.get("/get_title")
-def redirect_url(id: str):
+@app.get("/title")
+def get_url_title(id: str):
     target_site = URL_STORAGE.get_site(id)
     if not target_site:
         return {"error": f"invalid id {id}"}
